@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
+// enough when changing adapters.
+// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+}
+
+model StockSettings {
+  shop             String   @id
+  threshold        Int      @default(10)
+  alertEmail       String?
+  lowStockAlerts   Boolean  @default(true)
+  outOfStockAlerts Boolean  @default(true)
+  updateAt         DateTime @updatedAt
+}
+
+model StockAlert {
+  id        String   @id @default(cuid())
+  shop      String
+  productId String
+  title     String
+  stock     Int
+  createdAt DateTime @default(now())
+  outOfStockNotified Boolean @default(false)
+  @@unique([shop, productId])
+}
+
+model Scan {
+  id              String    @id @default(cuid())
+  shop            String
+  status          String
+  bulkOperationId String?
+  productsChecked Int       @default(0)
+  score           Int?
+  error           String?
+  startedAt       DateTime  @default(now())
+  finishedAt      DateTime?
+  issues          Issue[]
+
+  @@index([shop, startedAt])
+}
+
+model Issue {
+  id        String @id @default(cuid())
+  scanId    String
+  shop      String
+  productId String
+  title     String
+  checkId   String
+  severity  String
+  detail    String?
+  scan      Scan   @relation(fields: [scanId], references: [id], onDelete: Cascade)
+
+  @@index([scanId])
+  @@index([shop, checkId])
+}
+model AlertLog {
+  id        String   @id @default(cuid())
+  shop      String
+  productId String
+  title     String
+  stock     Int
+  sentTo    String
+  kind String @default("low")
+  createdAt DateTime @default(now())
+  status String @default("SENT")
+  @@index([shop, status])
+  @@index([shop, createdAt])
+}
+model AlertRecipient {
+  id        String   @id @default(cuid())
+  shop      String
+  email     String
+  createdAt DateTime @default(now())
+
+  @@unique([shop, email])
+}

@@ -1,0 +1,282 @@
+
+{% assign selected_collection = section.settings.featured_collection %}
+
+<section class="promo-section">
+
+  <div class="promo-header">
+    <p class="promo-subtitle">LIMITED TIME OFFER</p>
+    <h1>{{ section.settings.heading }}</h1>
+    <p>{{ section.settings.description }}</p>
+  </div>
+
+  {% if selected_collection != blank %}
+
+    <div class="promo-product-grid">
+
+      {% for product in selected_collection.products limit: 3 %}
+
+        <div class="promo-product-card">
+
+          <!-- Product Image -->
+          <a href="{{ product.url }}" class="promo-image-wrapper">
+            {% if product.featured_image %}
+              <img
+                src="{{ product.featured_image | image_url: width: 600 }}"
+                alt="{{ product.featured_image.alt | escape }}"
+                width="600"
+                height="600"
+                loading="lazy"
+              >
+            {% endif %}
+          </a>
+
+          <!-- Product Details -->
+          <div class="promo-product-details">
+
+            <h2>
+              <a href="{{ product.url }}">
+                {{ product.title }}
+              </a>
+            </h2>
+
+            <div class="promo-price">
+              <span class="current-price">
+                {{ product.price | money }}
+              </span>
+
+              {% if product.compare_at_price > product.price %}
+                <span class="old-price">
+                  {{ product.compare_at_price | money }}
+                </span>
+              {% endif %}
+            </div>
+
+            <!-- Buy Now -->
+            {% assign selected_variant = product.selected_or_first_available_variant %}
+
+            {% if selected_variant %}
+              {% form 'product', product, class: 'promo-product-form' %}
+
+                <input
+                  type="hidden"
+                  name="id"
+                  value="{{ selected_variant.id }}"
+                >
+
+                <button
+                  type="submit"
+                  name="add"
+                  class="promo-buy-button"
+                  {% unless selected_variant.available %}
+                    disabled
+                  {% endunless %}
+                >
+                  {% if selected_variant.available %}
+                    Buy Now
+                  {% else %}
+                    Sold Out
+                  {% endif %}
+                </button>
+
+              {% endform %}
+            {% endif %}
+
+          </div>
+
+        </div>
+
+      {% endfor %}
+
+    </div>
+
+  {% else %}
+
+    <p class="promo-empty-message">
+      Please select a collection in the theme editor.
+    </p>
+
+  {% endif %}
+
+</section>
+
+<style>
+  .promo-section {
+    padding: 60px 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .promo-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .promo-subtitle {
+    color: #b45309;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+
+  .promo-header h1 {
+    font-size: 36px;
+    margin: 12px 0;
+    color: #1f2937;
+  }
+
+  .promo-header p {
+    color: #6b7280;
+  }
+
+  .promo-product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .promo-product-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
+  }
+
+  .promo-product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .promo-image-wrapper {
+    display: block;
+    background: #f9fafb;
+    aspect-ratio: 1 / 1;
+  }
+
+  .promo-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .promo-product-details {
+    padding: 20px;
+  }
+
+  .promo-product-details h2 {
+    font-size: 18px;
+    margin: 0 0 12px;
+  }
+
+  .promo-product-details h2 a {
+    color: #111827;
+    text-decoration: none;
+  }
+
+  .promo-price {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .current-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .old-price {
+    font-size: 15px;
+    color: #9ca3af;
+    text-decoration: line-through;
+  }
+
+  .promo-product-form {
+    margin: 0;
+  }
+
+  .promo-buy-button {
+    width: 100%;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #111827;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .promo-buy-button:hover {
+    background: #374151;
+  }
+
+  .promo-buy-button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+  }
+
+  .promo-empty-message {
+    text-align: center;
+    padding: 30px;
+  }
+
+  @media (max-width: 768px) {
+    .promo-product-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .promo-header h1 {
+      font-size: 28px;
+    }
+
+    .promo-product-details {
+      padding: 14px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .promo-product-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .promo-section {
+      padding: 40px 16px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Promotional Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our Featured Products"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Discover our exclusive collection of products."
+    },
+    {
+      "type": "collection",
+      "id": "featured_collection",
+      "label": "Select Collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promotional Products"
+    }
+  ]
+}
+{% endschema %}

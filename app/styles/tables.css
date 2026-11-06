@@ -1,0 +1,35 @@
+.app-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: #202223;
+  font-size: 13px;
+}
+
+.app-table th {
+  padding: 12px;
+  background: #f6f6f7;
+  color: #4a4a4a;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.app-table thead th:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.app-table thead th:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.app-table td {
+  padding: 12px;
+  border-bottom: 1px solid #edeeef;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.app-table tbody tr:last-child td {
+  border-bottom: 0;
+}
