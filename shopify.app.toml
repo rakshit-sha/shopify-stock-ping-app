@@ -5,11 +5,6 @@ name = "StockPing"
 application_url = "https://shopify-stock-ping-app.onrender.com/"
 embedded = true
 
-redirect_urls = [
-  "https://shopify-stock-ping-app.onrender.com/auth/callback",
-  "https://shopify-stock-ping-app.onrender.com/auth/shopify/callback",
-  "https://shopify-stock-ping-app.onrender.com/api/auth"
-]
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "write_products,write_metaobjects,write_metaobject_definitions,read_inventory"
@@ -70,7 +65,11 @@ api_version = "2027-01"
   compliance_topics = [ "shop/redact" ]
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [
+  "https://shopify-stock-ping-app.onrender.com/auth/callback",
+  "https://shopify-stock-ping-app.onrender.com/auth/shopify/callback",
+  "https://shopify-stock-ping-app.onrender.com/api/auth"
+]
 
 [build]
 include_config_on_deploy = true
